@@ -17,14 +17,14 @@ def get_windows_path(win_path):
 
 
 def xml_content(partition_xml):
+    xml_list = []
     try:
         tree = ET.parse(partition_xml)
         root = tree.getroot()
     except BaseException as err:
         print(f'{err}')
-        return
+        return xml_list
 
-    xml_list = []
     for child in root:
         if not child.tag == 'partition':
             continue
