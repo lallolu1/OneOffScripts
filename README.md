@@ -11,4 +11,3 @@ To push
 
 #### git push origin <REMOTE_BRANCH>
     e.g.: git push origin lineage-18.1
->>>>>>> Stashed changes
