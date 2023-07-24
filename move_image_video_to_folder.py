@@ -51,7 +51,7 @@ if __name__ == "__main__":
     if not os.path.exists(destination_directory):
         try:
             os.makedirs(destination_directory, exist_ok=True)
-            print(f'{source_directory} has been created.')
+            print(f'{source_directory} has been created.\n')
         except:
             print(f'Failed to create {destination_directory}')
 
