@@ -4,8 +4,8 @@ import shutil
 import sys
 
 # List of image and video file extensions
-image_extensions = ['.jpg', '.jpeg', '.png', '.gif']
-video_extensions = ['.mp', '.mp4', '.avi', '.mkv']
+image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.dng', '.tiff', '.heif']
+video_extensions = ['.mp', '.mp4', '.avi', '.mkv', '.mpeg-4', '.h.264', '.h.265', '.m4v', '.mov']
 
 
 def copy_media_files(source_dir, destination_dir):
