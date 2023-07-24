@@ -4,9 +4,9 @@ import shutil
 import sys
 
 # List of image and video file extensions
-image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.dng', '.tiff', '.heif']
-video_extensions = ['.mp', '.mp4', '.avi', '.mkv', '.mpeg-4', '.h.264', '.h.265', '.m4v', '.mov']
-
+# image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.dng', '.tiff', '.heif']
+# video_extensions = ['.mp', '.mp4', '.avi', '.mkv', '.mpeg-4', '.h.264', '.h.265', '.m4v', '.mov']
+file_extension_to_ignore = ['.json', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pdf', '.txt', '.zip']
 
 def copy_media_files(source_dir, destination_dir):
     num_of_video_image_files = 0
@@ -14,7 +14,8 @@ def copy_media_files(source_dir, destination_dir):
         for file in files:
             file_extension = os.path.splitext(file)[1].lower()
             # print(f'file_extension: {file_extension}')
-            if (file_extension in image_extensions) or (file_extension in video_extensions):
+            # if (file_extension in image_extensions) or (file_extension in video_extensions):
+            if file_extension not in file_extension_to_ignore:
                 source_path = os.path.join(root, file)
                 destination_path = os.path.join(destination_dir, os.path.basename(file))
 
