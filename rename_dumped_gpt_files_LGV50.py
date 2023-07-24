@@ -59,7 +59,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Rename dumped gpt files to partition.img.'
                     'This script was originally written for '
-                    'LG android phone partition images.')
+                    'LG V50 android phone partition images.'
+                    'It should however work for all android '
+                    'phones using Qualcomm processors.')
     parser.add_argument('--partition_xml', dest="partition_xml",
                         help='Path to COM3_PartitionsList.xml.')
     parser.add_argument('--in_folder', dest="in_folder",
