@@ -57,7 +57,9 @@ def rename(xml_list, in_folder):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Rename dumped gpt files to partition.img.')
+        description='Rename dumped gpt files to partition.img.'
+                    'This script was originally written for '
+                    'LG android phone partition images.')
     parser.add_argument('--partition_xml', dest="partition_xml",
                         help='Path to COM3_PartitionsList.xml.')
     parser.add_argument('--in_folder', dest="in_folder",
