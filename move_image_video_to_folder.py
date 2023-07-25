@@ -87,12 +87,14 @@ def copy_files(root, file, destination_dir, renamed_files, files_skipped_copying
 def copy_media_files(source_dir, destination_dir):
     total_num_of_video_image_files_copied = 0
     number_of_files_not_copied = 0
+    num_of_files = 0  # Usig this since len(files) just returns 1
     renamed_files = []
     files_skipped_copying = []
     for root, _, files in os.walk(source_dir):
         with ThreadPoolExecutor(max_workers=16) as executor:
             future_results = []
             for file in files:
+                num_of_files += 1
                 future_results.append(
                     executor.submit(copy_files, root, file, destination_dir, renamed_files, files_skipped_copying))
             for future in tqdm(as_completed(future_results),
@@ -110,16 +112,19 @@ def copy_media_files(source_dir, destination_dir):
     # file in the same directory as the script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     renamed_files_list = os.path.join(script_dir, 'renamed_files_list.txt')
+    renamed_files.sort()
     with open(renamed_files_list, 'w') as df:
         df.writelines(renamed_files)
         print(f'files in destination directory that were renamed have been written to - {renamed_files_list}')
 
     # write to a file, list of files that were skipped since they have already been copied
     skipped_files = os.path.join(script_dir, 'files_skipped_copying.txt')
+    files_skipped_copying.sort()
     with open(skipped_files, 'w') as df:
         df.writelines(files_skipped_copying)
         print(f'files that were not copied since they have already been copied have been written to - {skipped_files}')
 
+    print(f'Total number of ALL files (media/non-media) found in folder and subfolders: {num_of_files}')
     print(f'Total number of video/image files copied: {total_num_of_video_image_files_copied}')
     print(f'Total number of video/image skipped since they were already copied: {number_of_files_not_copied}')
 
