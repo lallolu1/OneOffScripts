@@ -5,6 +5,7 @@ import pip
 import random
 import shutil
 import sys
+import time
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -40,7 +41,6 @@ def get_new_destination_filename_if_not_same_file_to_be_copied(file_to_copy, fil
 
     new_destination_file_name = ''
     if hash_file1 != hash_file2:
-
         new_destination_file_name = os.path.join(destination_dir,
                                                  rename_file(os.path.basename(file_to_copy)))
         print(f'Files with same name but different content found - {file_to_copy}\n'
@@ -48,8 +48,10 @@ def get_new_destination_filename_if_not_same_file_to_be_copied(file_to_copy, fil
 
     return new_destination_file_name
 
-def copy_files(root, file, destination_dir):
-    # num_of_video_image_files = 0
+
+def copy_files(root, file, destination_dir, renamed_files, files_skipped_copying):
+    # renamed_files = []
+    # files_skipped_copying = []
     file_has_extension_that_should_be_copied = True
     file_copied_to_destination = False
     file_extension = os.path.splitext(file)[1].lower()
@@ -66,42 +68,72 @@ def copy_files(root, file, destination_dir):
         else:
             # If path exist but has different md5, then it is not the same file
             # Check if new file is the exact one already copied
-            new_destination_path = get_new_destination_filename_if_not_same_file_to_be_copied(source_path, destination_path,
+            new_destination_path = get_new_destination_filename_if_not_same_file_to_be_copied(source_path,
+                                                                                              destination_path,
                                                                                               destination_dir)
             if new_destination_path:
                 shutil.copy2(source_path, new_destination_path)
                 file_copied_to_destination = True
+                renamed_files.append(new_destination_path + '\n')
             else:
                 print(f'{destination_path} has already been copied from another folder. Skipping ...')
+                files_skipped_copying.append(destination_path + '\n')
     else:
         file_has_extension_that_should_be_copied = False
 
-    return file_copied_to_destination, file_has_extension_that_should_be_copied
+    return file_copied_to_destination, file_has_extension_that_should_be_copied, renamed_files, files_skipped_copying
 
 
 def copy_media_files(source_dir, destination_dir):
     total_num_of_video_image_files_copied = 0
     number_of_files_not_copied = 0
+    renamed_files = []
+    files_skipped_copying = []
     for root, _, files in os.walk(source_dir):
         with ThreadPoolExecutor(max_workers=16) as executor:
             future_results = []
             for file in files:
-                future_results.append(executor.submit(copy_files, root, file, destination_dir))
+                future_results.append(
+                    executor.submit(copy_files, root, file, destination_dir, renamed_files, files_skipped_copying))
             for future in tqdm(as_completed(future_results),
                                total=len(future_results)):
 
-                file_copied_to_destination, file_has_extension_that_should_be_copied = future.result()
+                file_copied_to_destination, file_has_extension_that_should_be_copied, \
+                    renamed_files, files_skipped_copying = future.result()
                 if file_has_extension_that_should_be_copied:
                     if not file_copied_to_destination:
                         number_of_files_not_copied += 1
                     else:
                         total_num_of_video_image_files_copied += 1
 
+    # write files in destination directory that were renamed to a
+    # file in the same directory as the script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    renamed_files_list = os.path.join(script_dir, 'renamed_files_list.txt')
+    with open(renamed_files_list, 'w') as df:
+        df.writelines(renamed_files)
+        print(f'files in destination directory that were renamed have been written to - {renamed_files_list}')
+
+    # write to a file, list of files that were skipped since they have already been copied
+    skipped_files = os.path.join(script_dir, 'files_skipped_copying.txt')
+    with open(skipped_files, 'w') as df:
+        df.writelines(files_skipped_copying)
+        print(f'files that were not copied since they have already been copied have been written to - {skipped_files}')
+
     print(f'Total number of video/image files copied: {total_num_of_video_image_files_copied}')
     print(f'Total number of video/image skipped since they were already copied: {number_of_files_not_copied}')
 
+    # get the end time
+    end_time = time.time()
+
+    # get the execution time
+    elapsed_time = end_time - start_time
+    print('Execution time:', elapsed_time, 'seconds')
+
 
 if __name__ == "__main__":
+    # get the start time
+    start_time = time.time()
     parser = argparse.ArgumentParser(
         description="Find picture and video files in a directory and its subdirectories. "
                     "Then copy the files to a folder. The script was originally written to "
