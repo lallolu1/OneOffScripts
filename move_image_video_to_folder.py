@@ -1,7 +1,6 @@
 import argparse
 import hashlib
 import os
-import pip
 import random
 import shutil
 import sys
@@ -14,15 +13,16 @@ try:
     from tqdm import tqdm
 except (ModuleNotFoundError, ImportError) as err:
     print(f'{err}')
-    pip.main(['install', tqdm])
+    import pip
+    pip.main(['install', 'tqdm'])
     # os.system("pip install " + package)
     from tqdm import tqdm
 
 # List of image and video file extensions
 # image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.dng', '.tiff', '.heif']
 # video_extensions = ['.mp', '.mp4', '.avi', '.mkv', '.mpeg-4', '.h.264', '.h.265', '.m4v', '.mov']
-file_extension_to_ignore = ['.json', '.xml', '.html', '.htm', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pdf', '.txt',
-                            '.zip']
+file_extension_to_ignore = ['.json', '.xml', '.html', '.htm', '.xls', '.xlsx', '.doc', '.docx',
+                            '.ppt', '.pdf', '.txt', '.zip']
 
 
 def rename_file(file):
