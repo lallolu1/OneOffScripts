@@ -108,32 +108,37 @@ def copy_media_files(source_dir, destination_dir):
                     else:
                         total_num_of_video_image_files_copied += 1
 
+    print('\n\n' + ('#' * 35) + ' SUMMARY ' + ('#' * 35))
+    print(f'Total number of ALL files (media/non-media) found in folder and sub-folders: {num_of_files}')
+    print(f'Total number of renamed media files for destination directory: {len(renamed_files)}')
+    print(f'Total number of video/image files copied: {total_num_of_video_image_files_copied}')
+    print(f'Total number of video/image skipped since they were already copied: {number_of_files_not_copied}\n')
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     # write files in destination directory that were renamed to a
     # file in the same directory as the script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    renamed_files_list = os.path.join(script_dir, 'renamed_files_list.txt')
-    renamed_files.sort()
-    with open(renamed_files_list, 'w') as df:
-        df.writelines(renamed_files)
-        print(f'files in destination directory that were renamed have been written to - {renamed_files_list}')
+    if renamed_files:
+        renamed_files_list = os.path.join(script_dir, 'renamed_files_list.txt')
+        renamed_files.sort()
+        with open(renamed_files_list, 'w') as df:
+            df.writelines(renamed_files)
+            print(f'files in destination directory that were renamed have been written to - {renamed_files_list}')
 
     # write to a file, list of files that were skipped since they have already been copied
-    skipped_files = os.path.join(script_dir, 'files_skipped_copying.txt')
-    files_skipped_copying.sort()
-    with open(skipped_files, 'w') as df:
-        df.writelines(files_skipped_copying)
-        print(f'files that were not copied since they have already been copied have been written to - {skipped_files}')
-
-    print(f'Total number of ALL files (media/non-media) found in folder and subfolders: {num_of_files}')
-    print(f'Total number of video/image files copied: {total_num_of_video_image_files_copied}')
-    print(f'Total number of video/image skipped since they were already copied: {number_of_files_not_copied}')
+    if files_skipped_copying:
+        skipped_files = os.path.join(script_dir, 'files_skipped_copying.txt')
+        files_skipped_copying.sort()
+        with open(skipped_files, 'w') as df:
+            df.writelines(files_skipped_copying)
+            print(f'files that were not copied since they have already been copied have been written to - {skipped_files}')
 
     # get the end time
     end_time = time.time()
 
     # get the execution time
     elapsed_time = end_time - start_time
-    print('Execution time:', elapsed_time, 'seconds')
+    print('\nExecution time:', elapsed_time, 'seconds')
+    print(('#' * 80))
 
 
 if __name__ == "__main__":
