@@ -100,13 +100,16 @@ def copy_media_files(source_dir, destination_dir):
             for future in tqdm(as_completed(future_results),
                                total=len(future_results)):
 
-                file_copied_to_destination, file_has_extension_that_should_be_copied, \
-                    renamed_files, files_skipped_copying = future.result()
-                if file_has_extension_that_should_be_copied:
-                    if not file_copied_to_destination:
-                        number_of_files_not_copied += 1
-                    else:
-                        total_num_of_video_image_files_copied += 1
+                try:
+                    file_copied_to_destination, file_has_extension_that_should_be_copied, \
+                        renamed_files, files_skipped_copying = future.result()
+                    if file_has_extension_that_should_be_copied:
+                        if not file_copied_to_destination:
+                            number_of_files_not_copied += 1
+                        else:
+                            total_num_of_video_image_files_copied += 1
+                except UnicodeEncodeError as err:
+                    print(f'{err}')
 
     print('\n\n' + ('#' * 35) + ' SUMMARY ' + ('#' * 35))
     print(f'Total number of ALL files (media/non-media) found in folder and sub-folders: {num_of_files}')
