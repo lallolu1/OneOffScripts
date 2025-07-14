@@ -117,11 +117,11 @@ def copy_media_files(source_dir, destination_dir):
     print(f'Total number of video/image files copied: {total_num_of_video_image_files_copied}')
     print(f'Total number of video/image skipped since they were already copied: {number_of_files_not_copied}\n')
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    destination_dir_parent = os.path.dirname(os.path.abspath(destination_dir))
     # write files in destination directory that were renamed to a
     # file in the same directory as the script
     if renamed_files:
-        renamed_files_list = os.path.join(script_dir, 'renamed_files_list.txt')
+        renamed_files_list = os.path.join(destination_dir_parent, 'renamed_files_list.txt')
         renamed_files.sort()
         with open(renamed_files_list, 'w') as df:
             df.writelines(renamed_files)
@@ -129,7 +129,7 @@ def copy_media_files(source_dir, destination_dir):
 
     # write to a file, list of files that were skipped since they have already been copied
     if files_skipped_copying:
-        skipped_files = os.path.join(script_dir, 'files_skipped_copying.txt')
+        skipped_files = os.path.join(destination_dir_parent, 'files_skipped_copying.txt')
         files_skipped_copying.sort()
         with open(skipped_files, 'w') as df:
             df.writelines(files_skipped_copying)
